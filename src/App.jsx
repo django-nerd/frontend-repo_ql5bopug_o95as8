@@ -48,8 +48,8 @@ function App() {
           </div>
 
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <EventCard title="Halloween Party 2023" date="October 31" imageUrl="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop" />
-            <EventCard title="Labor Day Party" date="August 10" imageUrl="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1400&auto=format&fit=crop" />
+            <EventCard title="Halloween Party 2023" date="October 31" imageUrl="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop" slug="halloween-party-2023" />
+            <EventCard title="Labor Day Party" date="August 10" imageUrl="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1400&auto=format&fit=crop" slug="labor-day-party" />
           </div>
         </div>
       </section>
