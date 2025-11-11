@@ -3,11 +3,7 @@
 > vite
 
 
-  VITE v5.4.20  ready in 224 ms
+  VITE v5.4.20  ready in 400 ms
 
   ➜  Local:   http://localhost:3000/
-  ➜  Network: http://172.20.0.126:3000/
-7:48:54 PM [vite] ✨ new dependencies optimized: lucide-react
-7:48:54 PM [vite] ✨ optimized dependencies changed. reloading
-The file does not exist at "/home/workspace/node_modules/.vite/deps/chunk-A5RA4VRI.js?v=35b1d720" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
-The file does not exist at "/home/workspace/node_modules/.vite/deps/chunk-7D4SUZUM.js?v=35b1d720" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+  ➜  Network: http://172.20.4.83:3000/
