@@ -5,7 +5,7 @@ import App from './App'
 import Test from './Test'
 import EventDetail from './components/EventDetail'
 import { AuthProvider, useAuth } from './components/AuthProvider'
-import { AdminLogin, AdminRegisterModal } from './components/AdminAuth'
+import { AdminLogin, AdminRegisterInline } from './components/AdminAuth'
 import './index.css'
 
 function AdminLayout() {
@@ -73,12 +73,28 @@ function AdminSubscribersCard() {
   )
 }
 
+function AdminAuthRouter() {
+  const { adminCreated } = useAuth()
+  if (adminCreated === null) {
+    return (
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,rgba(186,230,253,0.5),rgba(191,219,254,0.6)_30%,rgba(224,242,254,0.7)_60%,white)] flex items-center justify-center text-slate-700">
+        Loading…
+      </div>
+    )
+  }
+  // If no admin exists -> show full registration page
+  if (adminCreated === false) {
+    return <AdminRegisterInline />
+  }
+  // Else show normal login page
+  return <AdminLogin />
+}
+
 function AdminLoginPage() {
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,rgba(186,230,253,0.5),rgba(191,219,254,0.6)_30%,rgba(224,242,254,0.7)_60%,white)] text-slate-800 p-6">
       <div className="max-w-6xl mx-auto">
-        <AdminLogin />
-        <AdminRegisterModal />
+        <AdminAuthRouter />
       </div>
     </div>
   )
