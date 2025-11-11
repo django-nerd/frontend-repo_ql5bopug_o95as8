@@ -23,7 +23,7 @@ function useCountdown(targetDate) {
 function App() {
   const event1End = useMemo(() => new Date().getTime() + 1000*60*60*24*7 + 1000*60*33, [])
   const event2End = useMemo(() => new Date().getTime() + 1000*60*60*24*12 + 1000*60*12, [])
-  const heroCountdown = useCountdown(event1End)
+  const heroCountdown = useCountdown(event1End || event2End)
 
   const scrollToContact = () => {
     const el = document.getElementById('contact')
@@ -66,7 +66,7 @@ function App() {
       <Contact />
 
       <footer className="max-w-6xl mx-auto px-6 mt-12 mb-10">
-        <p className="text-sm text-slate-600">Photo watermark appears automatically in the bottom-right corner. Advertising options will be available later.</p>
+        <p className="text-sm text-slate-600">PixFlow © 2025 — Secure Access.</p>
       </footer>
     </div>
   )

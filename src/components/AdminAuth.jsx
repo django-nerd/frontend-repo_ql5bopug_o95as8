@@ -69,7 +69,7 @@ export function AdminLogin() {
           {error && <div className="text-red-600 text-sm">{error}</div>}
           <button className="mt-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-400 shadow-lg hover:brightness-110 transition-all">Login</button>
           {adminCreated === false && (
-            <a href="#" onClick={(e)=>{e.preventDefault(); document.getElementById('admin-register')?.showModal()}} className="text-slate-600 text-sm text-center hover:text-slate-800">First time here? Create Admin Account</a>
+            <a href="#" onClick={(e)=>{e.preventDefault(); document.getElementById('admin-register')?.showModal()}} className="text-slate-700 text-sm text-center hover:text-slate-900">Iscriviti / Create Admin Account</a>
           )}
           <p className="text-xs text-center text-slate-500">Forgot password? (inactive)</p>
         </form>
@@ -102,6 +102,7 @@ export function AdminRegisterModal() {
       const data = await res.json()
       setAdminCreated(true)
       setToken(data.token)
+      document.getElementById('admin-register')?.close()
       window.location.href = '/admin'
     } catch (err) {
       setError('Registration failed. This may be disabled or already completed.')

@@ -1,10 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
   const [adminCreated, setAdminCreated] = useState(null) // null=loading, boolean afterwards
-  const [token, setToken] = useState(null)
+  const [token, setTokenState] = useState(() => {
+    try { return localStorage.getItem('pf_token') } catch { return null }
+  })
 
   useEffect(() => {
     const check = async () => {
@@ -19,7 +21,17 @@ export function AuthProvider({ children }) {
     check()
   }, [])
 
-  const value = { adminCreated, setAdminCreated, token, setToken }
+  const setToken = (t) => {
+    setTokenState(t)
+    try {
+      if (t) localStorage.setItem('pf_token', t)
+      else localStorage.removeItem('pf_token')
+    } catch {}
+  }
+
+  const logout = () => setToken(null)
+
+  const value = useMemo(() => ({ adminCreated, setAdminCreated, token, setToken, logout, isAuthed: !!token }), [adminCreated, token])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
