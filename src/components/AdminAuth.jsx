@@ -1,8 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from './AuthProvider'
 
-const Card = ({ children }) => (
-  <div className="w-full max-w-md rounded-2xl bg-white/80 backdrop-blur border border-white/60 p-6 shadow-[10px_10px_30px_rgba(30,64,175,0.08),-10px_-10px_30px_rgba(56,189,248,0.08)]">
+// Shared celebratory styles
+const gradientMain = 'from-[#FF6B6B] via-[#FFD56B] to-[#48CFCB]'
+const btnGradient = 'bg-gradient-to-r from-[#FF6B6B] via-[#FFD56B] to-[#48CFCB]'
+
+const AuthShell = ({ children, title = 'PixFlow • Secure Admin', subtitle = 'Joyful control for your event photos' }) => (
+  <div className="min-h-screen relative flex items-center justify-center px-6 py-10 text-white">
+    <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1528605105345-5344ea20e269?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center"></div>
+      <div className="absolute inset-0 backdrop-blur-[6px] bg-black/30"></div>
+      <div className={`absolute -top-20 -left-20 w-80 h-80 bg-gradient-to-br ${gradientMain} opacity-40 blur-3xl rounded-full`}></div>
+      <div className={`absolute -bottom-24 -right-24 w-96 h-96 bg-gradient-to-br ${gradientMain} opacity-30 blur-3xl rounded-full`}></div>
+    </div>
+
+    <div className="w-full max-w-xl">
+      <div className="flex flex-col items-center text-center mb-6">
+        <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${gradientMain} shadow-xl shadow-white/10`} />
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)] font-poppins">{title}</h1>
+        <p className="mt-1 text-white/90 font-nunito">{subtitle}</p>
+      </div>
+      <div className="w-full rounded-3xl bg-white/15 border border-white/30 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] p-6">
+        {children}
+      </div>
+      <p className="mt-6 text-center text-sm text-white/80">PixFlow © 2025 — Secure Admin Access.</p>
+    </div>
+  </div>
+)
+
+const Field = ({ children }) => (
+  <div className="relative">
     {children}
   </div>
 )
@@ -14,7 +41,7 @@ function TextInput({ type = 'text', placeholder, value, onChange }) {
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-xl px-4 py-3 bg-white/70 border border-white/60 shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-300"
+      className="w-full rounded-xl px-4 py-3 bg-white/80 text-slate-800 placeholder-slate-500 border border-white/60 shadow-inner focus:outline-none focus:ring-4 focus:ring-[#FFD56B]/40"
       required
     />
   )
@@ -25,16 +52,6 @@ export function AdminLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [showInfo, setShowInfo] = useState(false)
-
-  useEffect(() => {
-    // If admin already exists, briefly show an info message
-    if (adminCreated === true) {
-      setShowInfo(true)
-      const t = setTimeout(() => setShowInfo(false), 3000)
-      return () => clearTimeout(t)
-    }
-  }, [adminCreated])
 
   const submit = async (e) => {
     e.preventDefault()
@@ -54,34 +71,35 @@ export function AdminLogin() {
     }
   }
 
-  if (adminCreated === false) return null // Registration form will render instead
+  if (adminCreated === false) {
+    return (
+      <AuthShell title="PixFlow • Admin Login">
+        <div className="text-center text-white/90">
+          <p className="mb-2">An admin account has not been created yet.</p>
+          <a href="/admin-register" className={`inline-flex items-center justify-center rounded-full px-5 py-2 font-semibold text-slate-900 ${btnGradient} shadow-lg hover:scale-[1.01] transition-transform`}>
+            Create Admin Account
+          </a>
+        </div>
+      </AuthShell>
+    )
+  }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
-      <Card>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-sky-400 to-teal-400 shadow-inner" />
-          <div>
-            <h2 className="text-xl font-extrabold text-slate-800">PixFlow</h2>
-            <p className="text-slate-500 text-sm">Administrator Access Portal</p>
-          </div>
-        </div>
-
-        {showInfo && (
-          <div className="mb-3 text-sm text-slate-700 bg-sky-50 border border-sky-200 rounded-xl p-3">
-            An administrator account already exists. Please log in instead.
-          </div>
-        )}
-
-        <form onSubmit={submit} className="grid gap-3">
+    <AuthShell title="PixFlow • Admin Login">
+      <form onSubmit={submit} className="grid gap-3">
+        <Field>
           <TextInput placeholder="Username" value={username} onChange={setUsername} />
+        </Field>
+        <Field>
           <TextInput type="password" placeholder="Password" value={password} onChange={setPassword} />
-          {error && <div className="text-red-600 text-sm">{error}</div>}
-          <button className="mt-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-400 shadow-lg hover:brightness-110 transition-all">Login</button>
-          <a href="/reset-password" className="text-xs text-center text-sky-600 hover:text-sky-800">Forgot password?</a>
-        </form>
-      </Card>
-    </div>
+        </Field>
+        {error && <div className="text-red-200 text-sm">{error}</div>}
+        <button className={`mt-1 rounded-full px-4 py-2.5 text-sm font-semibold text-slate-900 ${btnGradient} shadow-lg shadow-black/20 hover:shadow-black/30 hover:brightness-[1.02] transition-all`}>
+          Login
+        </button>
+        <a href="/reset-password" className="text-xs text-white/90 hover:text-white">Forgot password?</a>
+      </form>
+    </AuthShell>
   )
 }
 
@@ -112,40 +130,30 @@ export function AdminRegisterInline() {
         try { const d = await res.json(); msg = d.detail || msg } catch {}
         throw new Error(msg)
       }
-      // Success: mark created and send to login page
       setAdminCreated(true)
-      setInfo('Account created successfully. Redirecting to login…')
-      setTimeout(() => { window.location.href = '/admin/login' }, 800)
+      setInfo('Account created successfully! Redirecting to login…')
+      setTimeout(() => { window.location.href = '/admin-login' }, 900)
     } catch (err) {
       setError(err.message || 'Registration failed. This may be disabled or already completed.')
     }
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
-      <Card>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-sky-400 to-teal-400 shadow-inner" />
-          <div>
-            <h2 className="text-xl font-extrabold text-slate-800">PixFlow</h2>
-            <p className="text-slate-500 text-sm">Create Admin Account</p>
-          </div>
+    <AuthShell title="Create Admin Account" subtitle="First-time setup">
+      <form onSubmit={submit} className="grid gap-3">
+        <TextInput placeholder="Full Name" value={fullName} onChange={setFullName} />
+        <TextInput placeholder="Username" value={username} onChange={setUsername} />
+        <TextInput type="email" placeholder="Email" value={email} onChange={setEmail} />
+        <TextInput type="password" placeholder="Password" value={password} onChange={setPassword} />
+        <TextInput type="password" placeholder="Confirm Password" value={confirm} onChange={setConfirm} />
+        {error && <div className="text-red-200 text-sm">{error}</div>}
+        {info && <div className="text-emerald-100 text-sm">{info}</div>}
+        <div className="flex items-center gap-2 mt-1">
+          <button className={`rounded-full px-4 py-2.5 text-sm font-semibold text-slate-900 ${btnGradient} shadow-lg shadow-black/20 hover:shadow-black/30 hover:brightness-[1.02] transition-all`}>Create Account</button>
+          <a href="/admin-login" className="text-xs text-white/90 hover:text-white">I already have an account</a>
         </div>
-        <form onSubmit={submit} className="grid gap-3">
-          <TextInput placeholder="Full Name" value={fullName} onChange={setFullName} />
-          <TextInput placeholder="Username" value={username} onChange={setUsername} />
-          <TextInput type="email" placeholder="Email" value={email} onChange={setEmail} />
-          <TextInput type="password" placeholder="Password" value={password} onChange={setPassword} />
-          <TextInput type="password" placeholder="Confirm Password" value={confirm} onChange={setConfirm} />
-          {error && <div className="text-red-600 text-sm">{error}</div>}
-          {info && <div className="text-slate-700 text-sm bg-sky-50 border border-sky-200 rounded-xl p-3">{info}</div>}
-          <div className="flex items-center gap-2 mt-2">
-            <button className="rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-400 shadow-lg hover:brightness-110 transition-all">Create Account</button>
-          </div>
-        </form>
-        <p className="mt-4 text-xs text-slate-500 text-center">PixFlow © 2025 — Secure Admin Setup.</p>
-      </Card>
-    </div>
+      </form>
+    </AuthShell>
   )
 }
 
@@ -176,26 +184,17 @@ export function ResetPasswordRequest() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
-      <Card>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-sky-400 to-teal-400 shadow-inner" />
-          <div>
-            <h2 className="text-xl font-extrabold text-slate-800">PixFlow — Password Recovery</h2>
-            <p className="text-slate-500 text-sm">Enter your registered admin email to receive a reset link.</p>
-          </div>
-        </div>
-        <form onSubmit={submit} className="grid gap-3">
-          <TextInput type="email" placeholder="Email" value={email} onChange={setEmail} />
-          {error && <div className="text-red-600 text-sm">{error}</div>}
-          {info && <div className="text-slate-700 text-sm bg-sky-50 border border-sky-200 rounded-xl p-3">{info}</div>}
-          <button className="mt-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-400 shadow-lg hover:brightness-110 transition-all">Send Reset Link</button>
-        </form>
-        <div className="mt-4 text-center">
-          <a href="/admin/login" className="text-xs text-sky-600 hover:text-sky-800">Back to Login</a>
-        </div>
-      </Card>
-    </div>
+    <AuthShell title="Password Reset" subtitle="We\'ll email you a link valid for 15 minutes">
+      <form onSubmit={submit} className="grid gap-3">
+        <TextInput type="email" placeholder="Email" value={email} onChange={setEmail} />
+        {error && <div className="text-red-200 text-sm">{error}</div>}
+        {info && <div className="text-emerald-100 text-sm">{info}</div>}
+        <button className={`mt-1 rounded-full px-4 py-2.5 text-sm font-semibold text-slate-900 ${btnGradient} shadow-lg hover:brightness-[1.02] transition-all`}>Send Reset Link</button>
+      </form>
+      <div className="mt-4 text-center">
+        <a href="/admin-login" className="text-xs text-white/90 hover:text-white">Back to Login</a>
+      </div>
+    </AuthShell>
   )
 }
 
@@ -243,34 +242,61 @@ export function NewPasswordPage() {
         throw new Error(msg)
       }
       setInfo('Password successfully reset. Redirecting to login…')
-      setTimeout(() => { window.location.href = '/admin/login' }, 1200)
+      setTimeout(() => { window.location.href = '/admin-login' }, 1200)
     } catch (err) {
       setError(err.message || 'Could not reset password')
     }
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
-      <Card>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-sky-400 to-teal-400 shadow-inner" />
-          <div>
-            <h2 className="text-xl font-extrabold text-slate-800">Set New Password</h2>
-            <p className="text-slate-500 text-sm">Enter a new password for your admin account.</p>
-          </div>
-        </div>
-        {validating ? (
-          <p className="text-slate-600">Validating link…</p>
-        ) : (
-          <form onSubmit={submit} className="grid gap-3">
-            <TextInput type="password" placeholder="New Password" value={password} onChange={setPassword} />
-            <TextInput type="password" placeholder="Confirm Password" value={confirm} onChange={setConfirm} />
-            {error && <div className="text-red-600 text-sm">{error}</div>}
-            {info && <div className="text-slate-700 text-sm bg-sky-50 border border-sky-200 rounded-xl p-3">{info}</div>}
-            <button disabled={!!error} className="mt-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-400 shadow-lg hover:brightness-110 transition-all">Save New Password</button>
-          </form>
-        )}
-      </Card>
-    </div>
+    <AuthShell title="Set New Password" subtitle="Enter and confirm your new password">
+      {validating ? (
+        <p className="text-white/90">Validating link…</p>
+      ) : (
+        <form onSubmit={submit} className="grid gap-3">
+          <TextInput type="password" placeholder="New Password" value={password} onChange={setPassword} />
+          <TextInput type="password" placeholder="Confirm Password" value={confirm} onChange={setConfirm} />
+          {error && <div className="text-red-200 text-sm">{error}</div>}
+          {info && <div className="text-emerald-100 text-sm">{info}</div>}
+          <button disabled={!!error} className={`mt-1 rounded-full px-4 py-2.5 text-sm font-semibold text-slate-900 ${btnGradient} shadow-lg hover:brightness-[1.02] transition-all`}>Save New Password</button>
+        </form>
+      )}
+    </AuthShell>
   )
+}
+
+// Dedicated pages aligning with routes from the prompt
+export function AdminRegisterPage() {
+  const { adminCreated } = useAuth()
+  const [messageShown, setMessageShown] = useState(false)
+  useEffect(() => {
+    if (adminCreated === true) {
+      setMessageShown(true)
+      const t = setTimeout(() => { window.location.href = '/admin-login' }, 3000)
+      return () => clearTimeout(t)
+    }
+  }, [adminCreated])
+
+  if (adminCreated === true) {
+    return (
+      <AuthShell title="Create Admin Account">
+        <div className="text-center">
+          <p className="text-white/90">An admin account already exists. Please log in.</p>
+          <p className="text-white/70 text-sm mt-1">Redirecting to login…</p>
+        </div>
+      </AuthShell>
+    )
+  }
+  if (adminCreated === null) {
+    return (
+      <AuthShell title="Create Admin Account">
+        <p className="text-white/90">Checking setup…</p>
+      </AuthShell>
+    )
+  }
+  return <AdminRegisterInline />
+}
+
+export function AdminLoginPage() {
+  return <AdminLogin />
 }

@@ -5,12 +5,12 @@ import App from './App'
 import Test from './Test'
 import EventDetail from './components/EventDetail'
 import { AuthProvider, useAuth } from './components/AuthProvider'
-import { AdminLogin, AdminRegisterInline, ResetPasswordRequest, NewPasswordPage } from './components/AdminAuth'
+import { AdminLoginPage, AdminRegisterPage, ResetPasswordRequest, NewPasswordPage } from './components/AdminAuth'
 import './index.css'
 
 function AdminLayout() {
   const { isAuthed } = useAuth()
-  if (!isAuthed) return <Navigate to="/admin/login" replace />
+  if (!isAuthed) return <Navigate to="/admin-login" replace />
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,rgba(186,230,253,0.5),rgba(191,219,254,0.6)_30%,rgba(224,242,254,0.7)_60%,white)] text-slate-800 p-6">
       <div className="max-w-6xl mx-auto">
@@ -73,53 +73,6 @@ function AdminSubscribersCard() {
   )
 }
 
-function AdminAuthRouter() {
-  const { adminCreated } = useAuth()
-  if (adminCreated === null) {
-    return (
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,rgba(186,230,253,0.5),rgba(191,219,254,0.6)_30%,rgba(224,242,254,0.7)_60%,white)] flex items-center justify-center text-slate-700">
-        Loading…
-      </div>
-    )
-  }
-  // If no admin exists -> show full registration page
-  if (adminCreated === false) {
-    return <AdminRegisterInline />
-  }
-  // Else show normal login page
-  return <AdminLogin />
-}
-
-function AdminLoginPage() {
-  return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,rgba(186,230,253,0.5),rgba(191,219,254,0.6)_30%,rgba(224,242,254,0.7)_60%,white)] text-slate-800 p-6">
-      <div className="max-w-6xl mx-auto">
-        <AdminAuthRouter />
-      </div>
-    </div>
-  )
-}
-
-function ResetPasswordPage() {
-  return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,rgba(186,230,253,0.5),rgba(191,219,254,0.6)_30%,rgba(224,242,254,0.7)_60%,white)] text-slate-800 p-6">
-      <div className="max-w-6xl mx-auto">
-        <ResetPasswordRequest />
-      </div>
-    </div>
-  )
-}
-
-function NewPasswordRoute() {
-  return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,rgba(186,230,253,0.5),rgba(191,219,254,0.6)_30%,rgba(224,242,254,0.7)_60%,white)] text-slate-800 p-6">
-      <div className="max-w-6xl mx-auto">
-        <NewPasswordPage />
-      </div>
-    </div>
-  )
-}
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
@@ -128,10 +81,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/test" element={<Test />} />
           <Route path="/event/:slug" element={<EventDetail />} />
-          <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/new-password" element={<NewPasswordRoute />} />
+
+          {/* Auth routes */}
+          <Route path="/admin-login" element={<AdminLoginPage />} />
+          <Route path="/admin-register" element={<AdminRegisterPage />} />
+          {/* Legacy alias */}
+          <Route path="/admin/login" element={<Navigate to="/admin-login" replace />} />
+
+          {/* Password reset */}
+          <Route path="/reset-password" element={<ResetPasswordRequest />} />
+          <Route path="/new-password" element={<NewPasswordPage />} />
+
+          {/* Admin area */}
           <Route path="/admin" element={<AdminLayout />} />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
